@@ -1,6 +1,6 @@
 import csv
 import fitz
-import unicodedata, re
+import re
 import config
 
 def highlight_straight_quotes(input_file:str, pages:list=None):
