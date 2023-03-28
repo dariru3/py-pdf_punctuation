@@ -30,8 +30,8 @@ def highlight_space_errors(input_file:str, pages:list=None):
 def check_spacing_errors(text, summary):
     errors = set()
     patterns = [
-        (r"([.,;:?!])\s{2,}"), # "Multiple spaces after punctuation"),
-        (r"(\s[.,;:?!'\[\]{}()“”‘’—-]\s)") #, "Space before and punctuation"),
+        # (r"([.,;:?!])\s{2,}"), # "Multiple spaces after punctuation"),
+        (r"(?<=\S)\s[.,;:?!'\[\]{}()“”‘’—-]\s") #, "Space before and after punctuation"),
     ]
     for pattern in patterns:
         compiled_pattern = re.compile(pattern)
