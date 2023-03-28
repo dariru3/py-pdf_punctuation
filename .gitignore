@@ -1,0 +1,7 @@
+*.pdf
+*.csv
+test_files/
+config.py
+__pycache__/
+.DS_Store
+env/
