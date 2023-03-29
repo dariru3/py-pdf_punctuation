@@ -1,12 +1,12 @@
 import csv
 import fitz
 import re
-import config
+from config import config
 
-def highlight_space_errors(input_file:str, pages:list=None):
-    comment_name = "Space Error Highlighter"
+def highlight_punctuation_errors(input_file:str, pages:list=None):
+    comment_name = "Punctuation Error Highlighter"
     # create matches list for output summary
-    spacing_summary = []
+    error_summary = []
     # open pdf
     pdfIn = fitz.open(input_file)
     # Iterate throughout pdf pages
@@ -18,19 +18,20 @@ def highlight_space_errors(input_file:str, pages:list=None):
 
         # Get all the text in the page
         text = page.get_text("text")
-        target_chars = check_spacing_errors(text, spacing_summary)
+        target_chars = check_punctuation_errors(text, error_summary)
 
         page_highlights = {}  # Initialize a dictionary to store match rectangles for each character
         get_positions(target_chars, text, page, page_highlights)
         add_highlight_annot(page_highlights, page, comment_name)
 
-    export_summary(spacing_summary)
+    export_summary(error_summary)
     save_output_file(input_file, pdfIn)
 
-def check_spacing_errors(text, summary):
+def check_punctuation_errors(text, summary):
     errors = set()
     patterns = [
         # (r"([.,;:?!])\s{2,}"), # "Multiple spaces after punctuation"),
+        (r"['\"]"), # "Straight quotes"
         (r"\s[.,;:?!'\[\]{}()“”‘’—-]\s") #, "Space before and after punctuation"),
     ]
     for pattern in patterns:
@@ -51,8 +52,8 @@ def update_summary(summary:list, char):
     if not found:
         summary.append({'char': char, 'count': 1})
 
-def get_positions(full_width_chars, text, page, page_highlights):
-    for char in full_width_chars:
+def get_positions(target_chars, text, page, page_highlights):
+    for char in target_chars:
         start_idx = 0
         while True:
             start_idx = text.find(char, start_idx)
@@ -82,24 +83,24 @@ def add_highlight_annot(page_highlights:dict, page, comment_name):
             annot = page.add_highlight_annot(rect)
             info = annot.info
             info["title"] = comment_name
-            info["content"] = char
+            info["content"] = f"Error found: {char}"
             annot.set_info(info)
             annot.update()
 
-def export_summary(full_width_summary:list):
+def export_summary(error_summary:list):
     fieldnames = ['Character', 'Count']
-    with open("spacing_summary.csv", mode='w', newline='', encoding='utf-8') as csv_file:
+    with open("error_summary.csv", mode='w', newline='', encoding='utf-8') as csv_file:
         csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         csv_writer.writeheader()
-        for entry in full_width_summary:
+        for entry in error_summary:
             csv_writer.writerow({
                 fieldnames[0]: entry['char'],
                 fieldnames[1]: entry['count']
             })
 
 def save_output_file(input_file, pdfIn):
-    output_file = input_file.split(".")[0] + " spacing_errors.pdf"
+    output_file = input_file.split(".")[0] + " punctuation_errors.pdf"
     pdfIn.save(output_file, garbage=3, deflate=True)
     pdfIn.close()
 
-highlight_space_errors(input_file=config.config["source_filename"])
+highlight_punctuation_errors(input_file=config["source_filename"])
