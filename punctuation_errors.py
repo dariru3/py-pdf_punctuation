@@ -32,7 +32,7 @@ def check_punctuation_errors(text, summary):
     patterns = [
         # (r"([.,;:?!])\s{2,}"), # "Multiple spaces after punctuation"),
         (r"['\"]"), # "Straight quotes"
-        (r"\s[.,;:?!'\[\]{}()“”‘’—-]\s") #, "Space before and after punctuation"),
+        (r"\s[.,;:?!'\[\]{}()“”‘’—-&%$¥]\s") #, "Space before and after punctuation"),
     ]
     for pattern in patterns:
         compiled_pattern = re.compile(pattern)
