@@ -30,9 +30,10 @@ def highlight_punctuation_errors(input_file:str, pages:list=None):
 def check_punctuation_errors(text, summary):
     errors = set()
     patterns = [
-        (r"[a-zA-Z0-9][.!?]\s{2}"), # "Double space after punctuation"),
-        (r"['\"]"), # "Straight quotes"
-        (r"\s[.,;:?!'\[\]{}()“”‘’&%$¥—-]\s") #, "Space before and after punctuation"),
+        (r"[a-zA-Z0-9][.!?]\s{2}"), # Double space after punctuation,
+        (r"['\"]"), # Straight quotes
+        (r"\s[.,;:?!'\[\]{}()“”‘’&%$¥—-]\s"), # Space before and after punctuation
+        (r'\s["’”](?=[a-zA-Z0-9])') # Space before closing quotation mark followed by a character
     ]
     for pattern in patterns:
         compiled_pattern = re.compile(pattern)
