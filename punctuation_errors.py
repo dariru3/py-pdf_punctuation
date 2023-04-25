@@ -33,7 +33,8 @@ def check_punctuation_errors(text, summary):
         (r"[a-zA-Z0-9][.!?]\s{2}"), # Double space after punctuation,
         (r"['\"]"), # Straight quotes
         (r"\s[.,;:?!'\[\]{}()“”‘’&%$¥—-]\s"), # Space before and after punctuation
-        (r'\s["’”](?=[a-zA-Z0-9])') # Space before closing quotation mark followed by a character
+        (r'\s["’”](?=[a-zA-Z0-9])'), # Space before closing quotation mark followed by a character
+        (r"[.,;:?!'\[\]{}()“”‘’&%$¥—-][.,;:?!'\[\]{}()“”‘’&%$¥—-]") # Same punctuation is used twice in a row
     ]
     for pattern in patterns:
         compiled_pattern = re.compile(pattern)
